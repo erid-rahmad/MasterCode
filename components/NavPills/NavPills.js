@@ -19,6 +19,7 @@ const useStyles = makeStyles(styles);
 
 export default function NavPills(props) {
   const [active, setActive] = React.useState(props.active);
+  console.log("tjis ptop"+props.active)
   const handleChange = (event, active) => {
     setActive(active);
   };
