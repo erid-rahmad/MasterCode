@@ -1,14 +1,10 @@
-
-
-
+generator client {
+  provider = "prisma-client-js"
+}
 
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
-}
-
-generator client {
-  provider = "prisma-client-js"
 }
 
 model Post {
@@ -18,41 +14,48 @@ model Post {
   published Boolean   @default(false)
   comments  Comment[]
 
-  @@map(name: "posts")
+  @@map("posts")
 }
 
 model Comment {
   id        String  @id @default(cuid())
   content   String?
-  post      Post?   @relation(fields: [postId], references: [id])
   postId    String?
   published Boolean @default(false)
+  post      Post?   @relation(fields: [postId], references: [id])
+
+  @@index([postId], map: "Comment_postId_fkey")
 }
 
 model Team {
-  id        String  @id @default(cuid())
-  name   String?
-  title      String?
-  desc    String?
+  id    String  @id @default(cuid())
+  name  String?
+  title String?
+  desc  String?
 }
 
-model type{
- id    String  @id @default(cuid())
- name   String?
- category category[]
-
+model type {
+  id       String     @id @default(cuid())
+  name     String?
+  category category[]
 }
 
 model category {
   id        String  @id @default(cuid())
-  cardTitle   String?
+  cardTitle String?
   body      String?
   footer    String?
   images    String?
-  type      type?   @relation(fields: [typeId], references: [id])
   typeId    String?
+  type      type?   @relation(fields: [typeId], references: [id])
 
-
+  @@index([typeId], map: "category_typeId_fkey")
 }
 
-
+model registerProduct {
+  id    String  @id @default(cuid())
+  name  String?
+  email String?
+  instance  String?
+  phone  String?
+}
