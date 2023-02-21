@@ -1,5 +1,4 @@
 import React from "react";
-// nodejs library that concatenates classes
 import classNames from "classnames";
 
 import {makeStyles} from "@material-ui/core/styles";
@@ -66,9 +65,6 @@ export default function LandingPage({data}) {
                     <ProductSection/>
                     <SectionPills datas={data.cardTitle}/>
                     <TeamSection/>
-
-                    {/*<WorkSection/>*/}
-
                 </div>
             </div>
 
@@ -78,10 +74,8 @@ export default function LandingPage({data}) {
 }
 
 export async function getServerSideProps() {
-
     const res = await fetch('http://localhost:3000/api/post/category-get')
     const cards =await res.json()
-
     let data =
         {
             "cardTitle": cards,
@@ -90,10 +84,6 @@ export async function getServerSideProps() {
             "images": "/img/Images/card-default.jpeg",
             "type": ""
         };
-
-
-
-
     return {
         props: {
             data
