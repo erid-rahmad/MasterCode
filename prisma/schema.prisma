@@ -59,3 +59,18 @@ model registerProduct {
   instance  String?
   phone  String?
 }
+
+model Product {
+  id        String  @id @default(cuid())
+  cardTitle String?
+  body      String?
+  footer    String?
+  images    String?
+  typeId    String?
+  type      String?
+}
+
+model ProductType {
+  id       String     @id @default(cuid())
+  name     String?
+}

@@ -74,15 +74,12 @@ export default function LandingPage({data}) {
 }
 
 export async function getServerSideProps() {
-    const res = await fetch('http://localhost:3000/api/post/category-get')
+    const res = await fetch('http://localhost:3000/api/product/find')
     const cards =await res.json()
     let data =
         {
-            "cardTitle": cards,
-            "body": "asdasd",
-            "footer": "asdasda",
-            "images": "/img/Images/card-default.jpeg",
-            "type": ""
+            "cardTitle": cards
+
         };
     return {
         props: {

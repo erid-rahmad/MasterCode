@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 // nodejs library that concatenates classes
 import classNames from "classnames";
 // @material-ui/core components
@@ -37,43 +37,66 @@ import AddIcon from "@material-ui/icons/Add";
 const useStyles = makeStyles(styles);
 
 
-
-
 const updateData = (data) => {
     console.log("data update" + JSON.stringify(data))
 }
 
 export default function ProfilePage(datas) {
     const classes = useStyles();
-    // console.log(datas)
+    const [Products, setProduct] = useState(datas.data);
 
 
-
-    const product = Array.from(datas.data);
-
-    function refreshData() {
+    async function addProduct() {
+        var data = {
+            cardTitle: '',
+            body: '',
+            footer: '',
+            images: '',
+            type: '',
+            typeId: ''
+        }
+        await fetch(`/api/product/create`, {
+            method: "POST", headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(data),
+        })
+            .then((response) => response.json())
+            .then((data) => setProduct([...Products, data]));
 
     }
 
-    const AddData = (data) => {
-        console.log("data ADD"+JSON.stringify(data))
-        product.push(
-            {
-                'cardTitle': '',
-                'id': null,
-                'body': '',
-                'footer': '',
-                'images': '',
-                'typeId': '',
-            }
-        )
-        document.getElementById("table1").contentWindow.location.reload(true);
+    function deleteProduct(product_) {
+
+        const copy = [...Products];
+        copy.splice(product_.id, 1)
+        console.log(copy)
+        setProduct(copy);
+
     }
-    const {control, register} = useForm();
-    const {fields, append, prepend, remove, swap, move, insert} = useFieldArray({
-        control, // control props comes from useForm (optional: if you are using FormContext)
-        name: "test", // unique name for your Field Array
-    });
+
+    async function updateProduct(UpdateProduct_) {
+        // const updatedProduct = Products.map((product) => {
+        //     if (product.id == UpdateProduct_.id) {
+        //         return {
+        //             ...product,
+        //             cardTitle: UpdateProduct_.cardTitle,
+        //             body: UpdateProduct_.body,
+        //             footer: UpdateProduct_.footer,
+        //             images: UpdateProduct_.images,
+        //             typeId: UpdateProduct_.typeId
+        //         };
+        //     }
+        //     return Products;
+        // });
+        // setProduct(updatedProduct);
+
+        const body = UpdateProduct_;
+        console.log("body", body);
+        let res = await fetch(`/api/product/update`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(body),
+        });
+    }
 
     return (<div>
         <Header
@@ -108,13 +131,13 @@ export default function ProfilePage(datas) {
                                             <TableCell align="center">TypeId</TableCell>
                                             <TableCell align="center">
                                                 <Button startIcon={<AddIcon/>}
-                                                        onClick={() => AddData({product})}>
+                                                        onClick={() => addProduct()}>
                                                 </Button>
                                             </TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {product.map((row, index) => (
+                                        {Products.map((row, index) => (
                                             <TableRow
                                                 key={row.id}
                                                 sx={{'&:last-child td, &:last-child th': {border: 0}}}>
@@ -148,14 +171,13 @@ export default function ProfilePage(datas) {
                                                     <div>
                                                         <Button color="primary"
                                                                 startIcon={<EditIcon/>}
-                                                                onClick={() => updateData(row)}>
+                                                                onClick={() => updateProduct(row)}>
                                                         </Button>
                                                         <Button startIcon={<DeleteIcon/>}
-                                                                onClick={() => updateData(row)}>
+                                                                onClick={() => deleteProduct(row)}>
                                                         </Button>
                                                     </div>
                                                 </TableCell>
-
 
 
                                             </TableRow>)
@@ -182,15 +204,7 @@ export default function ProfilePage(datas) {
                         tabIcon: Favorite,
                         tabContent: (
                             <div>
-                                {fields.map((field, index) => (
-                                    <input
-                                        key={field.id} // important to include key with field's id
-                                        {...register(`test.${index}.value`)}
-                                    />
-                                ))}
-                                <div>
-                                    <button onClick={() => append()}></button>
-                                </div>
+
                             </div>
 
                         )
@@ -205,7 +219,7 @@ export default function ProfilePage(datas) {
 }
 
 export async function getServerSideProps() {
-    const result = await prisma.category.findMany();
+    const result = await prisma.Product.findMany();
     let data = result
 
     ;
@@ -215,6 +229,9 @@ export async function getServerSideProps() {
         },
     }
 }
+
+
+
 
 
 
