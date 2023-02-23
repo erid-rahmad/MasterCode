@@ -3,11 +3,7 @@ import React, {useState} from "react";
 import classNames from "classnames";
 // @material-ui/core components
 import {makeStyles} from "@material-ui/core/styles";
-// @material-ui/icons
-import Camera from "@material-ui/icons/Camera";
-import Palette from "@material-ui/icons/Palette";
-import Favorite from "@material-ui/icons/Favorite";
-// core components
+
 import Header from "/components/Header/Header.js";
 import Footer from "/components/Footer/Footer.js";
 import Button from "/components/CustomButtons/Button.js";
@@ -23,15 +19,48 @@ import {router} from "next/client";
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 
+
 const useStyles = makeStyles(styles);
 
-export default function ProfilePage() {
+export default function ProfilePage(props) {
+
     const classes = useStyles();
     const imageClasses = classNames(classes.imgRaised, classes.imgRoundedCircle, classes.imgFluid);
     const {id} = router.query;
     const {register, handleSubmit, control} = useForm();
 
-    const onformSubmit = async data => {
+    // var mainData = {};
+
+    const {mainData, setMainData} = useState(null);
+    const [data, setData] = useState(null)
+    console.log("this  main data" + mainData)
+
+
+
+
+    async function tes() {
+        var body = {
+            id: id
+        }
+
+
+        await fetch(`/api/product/findUnique`, {
+            method: "POST", headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(body),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                // console.log("this res" + JSON.stringify(res));
+                setData(data)
+                // setMainData(data)
+            })
+    }
+
+
+    console.log("this data"+data)
+
+
+    async function onformSubmit(data) {
         try {
             const body = {
                 name: data.name,
@@ -49,6 +78,7 @@ export default function ProfilePage() {
             console.error(error);
         }
     }
+
     return (<div>
 
         <Header
@@ -77,7 +107,7 @@ export default function ProfilePage() {
                                 </div>
                                 <div className={classes.name}>
                                     <h3 className={classes.title}>NAMED</h3>
-                                    <h6>CLASIFIKASI {id}</h6>
+                                    {/*<h6>{data.cardTitle}</h6>*/}
 
                                 </div>
                             </div>
@@ -90,16 +120,7 @@ export default function ProfilePage() {
                             <Grid item xs={8}>
                                 <Item>
                                     <p>
-                                        An artist of considerable range, Chet Faker — the name taken by
-                                        Melbourne-raised, Brooklyn-based Nick Murphy — writes, performs
-                                        and records all of his own music, giving it a warm, intimate
-                                        feel with a solid groove structure
-                                    </p>
-                                    <p>
-                                        An artist of considerable range, Chet Faker — the name taken by
-                                        Melbourne-raised, Brooklyn-based Nick Murphy — writes, performs
-                                        and records all of his own music, giving it a warm, intimate
-                                        feel with a solid groove structure
+                                        {/*{mainData.body}*/}
 
                                     </p>
                                 </Item>
@@ -170,7 +191,34 @@ export default function ProfilePage() {
 }
 
 
+// export async function getStaticProps() {
+//     let data = "string" ;
+//     const {id} = router.query;
+//
+//     var req = {
+//         id: id
+//
+//     }
+//     await fetch(`/api/product/findUnique`, {
+//         method: "POST", headers: {"Content-Type": "application/json"},
+//         body: JSON.stringify(req),
+//     })
+//         .then((response) => response.json())
+//         .then((datas) =>data=datas );
+//
+//     return {
+//         props: {
+//             data
+//         },
+//     }
+// }
 
 
 
-
+export const getServerSideProps = async ({ params }) => {
+    return {
+        props: {
+            id:params?.id
+        },
+    };
+};

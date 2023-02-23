@@ -18,7 +18,6 @@ const dashboardRoutes = [];
 const useStyles = makeStyles(styles);
 export default function LandingPage({data}) {
 
-
     const classes = useStyles();
     return (
         <div>

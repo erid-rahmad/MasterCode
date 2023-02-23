@@ -22,10 +22,10 @@ import {useRouter} from "next/router";
 
 const useStyles = makeStyles(styles);
 
-export default function ninjas({ datas }) {
+export default function ninjas({datas}) {
 
     const classes = useStyles();
-    const router =useRouter()
+    const router = useRouter()
     return (<div className={classes.section}>
         <div className={classes.container}>
             <div id="navigation-pills">
@@ -52,8 +52,13 @@ export default function ninjas({ datas }) {
                                                         />
                                                         <CardBody>
                                                             <h4 className={classes.cardTitle}>{event.cardTitle}</h4>
-                                                            <p>{event.body}</p>
-                                                            <Button color="primary" onClick={()=>router.push(`/landings/${event.id}`)}  >View</Button>
+                                                            <p>{event.footer}</p>
+                                                            <Button color="primary" onClick={() =>{
+                                                                router.push({
+                                                                pathname: `/landings/tes`, query:  {id:event.id}
+
+                                                            })}
+                                                            }>View</Button>
                                                         </CardBody>
                                                     </Card>
                                                 </Grid>
