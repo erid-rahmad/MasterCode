@@ -24,7 +24,7 @@ export default function LandingPage({data}) {
             <Header
                 color="transparent"
                 routes={dashboardRoutes}
-                brand="NextJS Material Kit"
+                brand="MASTER CODE"
                 rightLinks={<HeaderLinks/>}
                 fixed
                 changeColorOnScroll={{
@@ -33,7 +33,7 @@ export default function LandingPage({data}) {
                 }}
 
             />
-            <Parallax filter responsive image="/img/landing-bg.jpg">
+            <Parallax filter responsive image="/img/bg1.jpeg">
                 <div className={classes.container}>
                     <GridContainer>
                         <GridItem xs={12} sm={12} md={6}>

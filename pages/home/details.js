@@ -1,9 +1,6 @@
 import React, {useState} from "react";
-// nodejs library that concatenates classes
 import classNames from "classnames";
-// @material-ui/core components
 import {makeStyles} from "@material-ui/core/styles";
-
 import Header from "/components/Header/Header.js";
 import Footer from "/components/Footer/Footer.js";
 import Button from "/components/CustomButtons/Button.js";
@@ -15,50 +12,20 @@ import Parallax from "/components/Parallax/Parallax.js";
 import {useForm} from 'react-hook-form'
 import styles from "/styles/jss/nextjs-material-kit/pages/profilePage.js";
 import Grid from "@material-ui/core/Grid";
-import {router} from "next/client";
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-
+import prisma from "../../lib/prisma";
+import {useRouter} from "next/router";
 
 const useStyles = makeStyles(styles);
 
-export default function ProfilePage(props) {
-
+export default function ProfilePage(prop) {
+    const router = useRouter();
     const classes = useStyles();
     const imageClasses = classNames(classes.imgRaised, classes.imgRoundedCircle, classes.imgFluid);
-    const {id} = router.query;
     const {register, handleSubmit, control} = useForm();
-
-    // var mainData = {};
-
-    const {mainData, setMainData} = useState(null);
-    const [data, setData] = useState(null)
-    console.log("this  main data" + mainData)
-
-
-
-
-    async function tes() {
-        var body = {
-            id: id
-        }
-
-
-        await fetch(`/api/product/findUnique`, {
-            method: "POST", headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(body),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                // console.log("this res" + JSON.stringify(res));
-                setData(data)
-                // setMainData(data)
-            })
-    }
-
-
-    console.log("this data"+data)
-
+    const {data, setData} = useState(prop.result);
+    console.log("this data", data)
 
     async function onformSubmit(data) {
         try {
@@ -83,7 +50,7 @@ export default function ProfilePage(props) {
 
         <Header
             color="transparent"
-            brand="NextJS Material Kit"
+            brand="MASTER CODE"
             rightLinks={<HeaderLinks/>}
             fixed
             changeColorOnScroll={{
@@ -91,42 +58,25 @@ export default function ProfilePage(props) {
             }}
 
         />
-        <Parallax small filter image="/img/profile-bg.jpg"/>
+        <Parallax small filter image="/img/bg1.jpeg"/>
         <div className={classNames(classes.main, classes.mainRaised)}>
             <div>
                 <div className={classes.container}>
+                    <div className={classes.name}>
+                        <h3 className={classes.title}>{prop.result.cardTitle}</h3>
+                    </div>
                     <GridContainer justify="center">
-                        <GridItem xs={12} sm={12} md={6}>
-                            <div className={classes.profile}>
-                                <div>
-                                    <img
-                                        src="/img/faces/christian.jpg"
-                                        alt="..."
-                                        className={imageClasses}
-                                    />
-                                </div>
-                                <div className={classes.name}>
-                                    <h3 className={classes.title}>NAMED</h3>
-                                    {/*<h6>{data.cardTitle}</h6>*/}
-
-                                </div>
-                            </div>
-                        </GridItem>
-                    </GridContainer>
-
-                    <GridContainer justify="center">
-
                         <Grid container spacing={2}>
                             <Grid item xs={8}>
                                 <Item>
                                     <p>
-                                        {/*{mainData.body}*/}
+                                        {prop.result.body}
 
                                     </p>
                                 </Item>
                             </Grid>
                             <Grid item xs={4}>
-
+                                <h4>Register Here</h4>
                                 <Box onSubmit={handleSubmit(onformSubmit)}
                                      component="form"
                                      sx={{
@@ -176,8 +126,8 @@ export default function ProfilePage(props) {
                                         size="small"
                                         {...register('phone')}
                                     />
+                                    <div align="center"><Button  color="primary" type="submit">Submit</Button></div>
 
-                                    <Button color="primary" type="submit">View</Button>
                                 </Box>
 
                             </Grid>
@@ -191,34 +141,26 @@ export default function ProfilePage(props) {
 }
 
 
-// export async function getStaticProps() {
-//     let data = "string" ;
-//     const {id} = router.query;
-//
-//     var req = {
-//         id: id
-//
-//     }
-//     await fetch(`/api/product/findUnique`, {
-//         method: "POST", headers: {"Content-Type": "application/json"},
-//         body: JSON.stringify(req),
-//     })
-//         .then((response) => response.json())
-//         .then((datas) =>data=datas );
-//
-//     return {
-//         props: {
-//             data
-//         },
-//     }
-// }
+export async function getServerSideProps(context) {
 
+    const {id} = context.query;
+    var req = {
+        id: id
+    }
 
+    const result = await prisma.Product.findUnique({
+        where: {
+            id: id,
+        },
+    });
 
-export const getServerSideProps = async ({ params }) => {
     return {
         props: {
-            id:params?.id
+            result
         },
-    };
-};
+    }
+}
+
+
+
+

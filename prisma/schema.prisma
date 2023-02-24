@@ -63,7 +63,7 @@ model registerProduct {
 model Product {
   id        String  @id @default(cuid())
   cardTitle String?
-  body      String?
+  body      String? @db.VarChar(2000)
   footer    String?
   images    String?
   typeId    String?
