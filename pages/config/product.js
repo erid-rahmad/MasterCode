@@ -74,21 +74,6 @@ export default function ProfilePage(datas) {
     }
 
     async function updateProduct(UpdateProduct_) {
-        // const updatedProduct = Products.map((product) => {
-        //     if (product.id == UpdateProduct_.id) {
-        //         return {
-        //             ...product,
-        //             cardTitle: UpdateProduct_.cardTitle,
-        //             body: UpdateProduct_.body,
-        //             footer: UpdateProduct_.footer,
-        //             images: UpdateProduct_.images,
-        //             typeId: UpdateProduct_.typeId
-        //         };
-        //     }
-        //     return Products;
-        // });
-        // setProduct(updatedProduct);
-
         const body = UpdateProduct_;
         console.log("body", body);
         let res = await fetch(`/api/product/update`, {

@@ -20,7 +20,7 @@ import Email from "@material-ui/icons/Email";
 import CustomDropdown from "../../components/CustomDropdown/CustomDropdown";
 import SectionNavbarsAdmin from "../../pages-sections/Components-Sections/SectionNavbarsAdmin";
 
-const dashboardRoutes = [];
+
 const useStyles = makeStyles(styles);
 import {styled, useTheme} from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -42,6 +42,27 @@ import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import {drawerWidth} from "../../styles/jss/nextjs-material-kit";
+import prisma from "../../lib/prisma";
+import {
+    Container, FormHelperText, NativeSelect,
+
+    Select,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow
+} from "@mui/material";
+import Paper from "@material-ui/core/Paper";
+import AddIcon from "@material-ui/icons/Add";
+import Input from "@material-ui/core/Input";
+import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@material-ui/icons/Delete";
+
+import InputLabel from "@material-ui/core/InputLabel";
+import FormControl from "@material-ui/core/FormControl";
+import MenuItem from '@mui/material/MenuItem';
 
 
 const openedMixin = (theme) => ({
@@ -110,29 +131,59 @@ const Drawer = styled(MuiDrawer, {shouldForwardProp: (prop) => prop !== 'open'})
 );
 
 
-export default function LandingPage({data}) {
+export default function LandingPage(prop) {
     const theme = useTheme();
     const [open, setOpen] = useState(false);
 
     const handleDrawerOpen = () => {
         console.log("this open drawer", open)
-        // if (open==true)
         open == true ? setOpen(false) : setOpen(true);
-
-
     };
 
-    const handleDrawerClose = () => {
-        setOpen(false);
-    };
+    const [Products, setProduct] = useState(prop.data);
+
+
+    async function addProduct() {
+        var data = {
+            cardTitle: '',
+            body: '',
+            footer: '',
+            images: '',
+            type: '',
+            typeId: ''
+        }
+        await fetch(`/api/product/create`, {
+            method: "POST", headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(data),
+        })
+            .then((response) => response.json())
+            .then((data) => setProduct([...Products, data]));
+
+    }
+
+    function deleteProduct(product_) {
+
+        const copy = [...Products];
+        copy.splice(product_.id, 1)
+        console.log(copy)
+        setProduct(copy);
+
+    }
+
+    async function updateProduct(UpdateProduct_) {
+        const body = UpdateProduct_;
+        console.log("body", body);
+        let res = await fetch(`/api/product/update`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(body),
+        });
+    }
 
 
     const classes = useStyles();
     return (
         <Box sx={{display: 'flex'}}>
-            <CssBaseline/>
-            <AppBar position="fixed" open={open}>
-            </AppBar>
             <Drawer variant="permanent" open={open}>
                 <DrawerHeader>
                     <IconButton onClick={handleDrawerOpen}>{open == false ? <ChevronRightIcon/> : <ChevronLeftIcon/>}
@@ -187,51 +238,100 @@ export default function LandingPage({data}) {
                     ))}
                 </List>
             </Drawer>
-            <Box component="main" >
+            <Box  component={Paper} fixed  >
+
                 <SectionNavbarsAdmin/>
-                <Typography paragraph>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                    tempor incididunt ut labore et dolore magna aliqua. Rhoncus dolor purus non
-                    enim praesent elementum facilisis leo vel. Risus at ultrices mi tempus
-                    imperdiet. Semper risus in hendrerit gravida rutrum quisque non tellus.
-                    Convallis convallis tellus id interdum velit laoreet id donec ultrices.
-                    Odio morbi quis commodo odio aenean sed adipiscing. Amet nisl suscipit
-                    adipiscing bibendum est ultricies integer quis. Cursus euismod quis viverra
-                    nibh cras. Metus vulputate eu scelerisque felis imperdiet proin fermentum
-                    leo. Mauris commodo quis imperdiet massa tincidunt. Cras tincidunt lobortis
-                    feugiat vivamus at augue. At augue eget arcu dictum varius duis at
-                    consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem donec massa
-                    sapien faucibus et molestie ac.
-                </Typography>
-                <Typography paragraph>
-                    Consequat mauris nunc congue nisi vitae suscipit. Fringilla est ullamcorper
-                    eget nulla facilisi etiam dignissim diam. Pulvinar elementum integer enim
-                    neque volutpat ac tincidunt. Ornare suspendisse sed nisi lacus sed viverra
-                    tellus. Purus sit amet volutpat consequat mauris. Elementum eu facilisis
-                    sed odio morbi. Euismod lacinia at quis risus sed vulputate odio. Morbi
-                    tincidunt ornare massa eget egestas purus viverra accumsan in. In hendrerit
-                    gravida rutrum quisque non tellus orci ac. Pellentesque nec nam aliquam sem
-                    et tortor. Habitant morbi tristique senectus et. Adipiscing elit duis
-                    tristique sollicitudin nibh sit. Ornare aenean euismod elementum nisi quis
-                    eleifend. Commodo viverra maecenas accumsan lacus vel facilisis. Nulla
-                    posuere sollicitudin aliquam ultrices sagittis orci a.
-                </Typography>
+                <TableContainer>
+                    <Table sx={{minWidth: 100}} aria-label="simple table" id="table1">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell align="center">Title</TableCell>
+                                <TableCell align="center">Body</TableCell>
+                                <TableCell align="center">Footer</TableCell>
+                                <TableCell align="center">Images</TableCell>
+                                <TableCell align="center">TypeId</TableCell>
+                                <TableCell align="center">
+                                    <Button color="warning" startIcon={<AddIcon/>}
+                                            onClick={() => addProduct()}>
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {Products.map((row, index) => (
+                                <TableRow
+                                    key={row.id}
+                                    sx={{'&:last-child td, &:last-child th': {border: 0}}}>
+
+                                    <TableCell>
+                                        <Input
+                                            defaultValue={row.cardTitle}
+                                            onChange={(e) => row.cardTitle = e.target.value}/>
+                                    </TableCell>
+                                    <TableCell sx={{minWidth: 300}}>
+                                        <Input
+                                            defaultValue={row.body}
+                                            onChange={(e) => row.body = e.target.value}/>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Input
+                                            defaultValue={row.footer}
+                                            onChange={(e) => row.footer = e.target.value}/>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Input
+                                            defaultValue={row.images}
+                                            onChange={(e) => row.images = e.target.value}/>
+                                    </TableCell>
+                                    <TableCell width="90px">
+                                        <FormControl fullWidth>
+
+                                            <NativeSelect
+                                                defaultValue={row.typeId}
+                                                onChange={(e) => row.typeId = e.target.value}
+                                            >
+                                                <option value="{10}">Ten</option>
+                                                <option value="{20}">Twenty</option>
+                                                <option value="{30}">Thirty</option>
+                                            </NativeSelect>
+                                        </FormControl>
+
+
+                                        {/*<Input*/}
+                                        {/*    defaultValue={row.typeId}*/}
+                                        {/*    onChange={(e) => row.typeId = e.target.value}/>*/}
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        <div>
+                                            <Button color="primary"
+                                                    startIcon={<EditIcon/>}
+                                                    onClick={() => updateProduct(row)}>
+                                            </Button>
+                                            <Button color="warning" startIcon={<DeleteIcon/>}
+                                                    onClick={() => deleteProduct(row)}>
+                                            </Button>
+                                        </div>
+                                    </TableCell>
+
+
+                                </TableRow>)
+                            )}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+
+
             </Box>
         </Box>
     );
 }
 
+
 export async function getServerSideProps() {
-    const res = await fetch('http://localhost:3000/api/post/category-get')
-    const cards = await res.json()
-    let data =
-        {
-            "cardTitle": cards,
-            "body": "asdasd",
-            "footer": "asdasda",
-            "images": "/img/Images/card-default.jpeg",
-            "type": ""
-        };
+    const result = await prisma.Product.findMany();
+    let data = result
+
+    ;
     return {
         props: {
             data
