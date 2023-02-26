@@ -74,3 +74,12 @@ model ProductType {
   id       String     @id @default(cuid())
   name     String?
 }
+
+model Review {
+  id        String  @id @default(cuid())
+  name      String?
+  review    Int?
+  comment    String?
+  position   String?
+  note      String?
+}
