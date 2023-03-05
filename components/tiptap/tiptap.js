@@ -7,8 +7,7 @@ import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import React, {useEffect} from 'react'
 import Button from '@mui/material/Button';
-import {Container} from "@mui/material";
-import Paper from "@material-ui/core/Paper";
+
 
 
 const MenuBar = ({ editor }) => {
@@ -207,7 +206,7 @@ export default (prop) => {
     ,
     })
 
-    useEffect()
+
 
     return (
         <div>

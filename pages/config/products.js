@@ -346,7 +346,7 @@ export default function LandingPage(prop) {
                     aria-describedby="modal-modal-description"
                 >
                     <Box sx={style}>
-                                <Tiptap content = {content} setContent={setContent()} />
+                                <Tiptap content = {content}  />
                     </Box>
                 </Modal>
                 <Footer/>
