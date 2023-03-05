@@ -2,9 +2,10 @@ import React, {useState} from "react";
 import classNames from "classnames";
 
 import {makeStyles} from "@material-ui/core/styles";
+import Footer from "/components/Footer/Footer.js";
 
 import Header from "/components/Header/Header.js";
-import Footer from "/components/Footer/Footer.js";
+
 import GridContainer from "/components/Grid/GridContainer.js";
 import GridItem from "/components/Grid/GridItem.js";
 import Button from "/components/CustomButtons/Button.js";
@@ -42,9 +43,10 @@ import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import {drawerWidth} from "../../styles/jss/nextjs-material-kit";
+import Tiptap from"../../components/tiptap/tiptap.js"
 import prisma from "../../lib/prisma";
 import {
-    Container, FormHelperText, NativeSelect,
+    Container, FormHelperText, Modal, NativeSelect,
 
     Select,
     Table,
@@ -60,9 +62,9 @@ import Input from "@material-ui/core/Input";
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
 
-import InputLabel from "@material-ui/core/InputLabel";
+
 import FormControl from "@material-ui/core/FormControl";
-import MenuItem from '@mui/material/MenuItem';
+
 
 
 const openedMixin = (theme) => ({
@@ -133,7 +135,23 @@ const Drawer = styled(MuiDrawer, {shouldForwardProp: (prop) => prop !== 'open'})
 
 export default function LandingPage(prop) {
     const theme = useTheme();
+
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 900,
+
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        pt: 2,
+        px: 4,
+        pb: 3,
+    };
     const [open, setOpen] = useState(false);
+    const [content, setContent] = useState(false);
 
     const handleDrawerOpen = () => {
         console.log("this open drawer", open)
@@ -141,6 +159,14 @@ export default function LandingPage(prop) {
     };
 
     const [Products, setProduct] = useState(prop.data);
+
+    const [modal, setModal] = React.useState(false);
+    const handleOpen = () => {
+        setModal(true);
+    };
+    const handleClose = () => {
+        setModal(false);
+    };
 
 
     async function addProduct() {
@@ -238,9 +264,8 @@ export default function LandingPage(prop) {
                     ))}
                 </List>
             </Drawer>
-            <Box  component={Paper} fixed  >
-
-                <SectionNavbarsAdmin/>
+            <Box  component={Paper}  fixed  >
+                <SectionNavbarsAdmin  />
                 <TableContainer>
                     <Table sx={{minWidth: 100}} aria-label="simple table" id="table1">
                         <TableHead>
@@ -262,16 +287,19 @@ export default function LandingPage(prop) {
                                 <TableRow
                                     key={row.id}
                                     sx={{'&:last-child td, &:last-child th': {border: 0}}}>
-
                                     <TableCell>
                                         <Input
                                             defaultValue={row.cardTitle}
                                             onChange={(e) => row.cardTitle = e.target.value}/>
                                     </TableCell>
-                                    <TableCell sx={{minWidth: 300}}>
-                                        <Input
-                                            defaultValue={row.body}
-                                            onChange={(e) => row.body = e.target.value}/>
+                                    <TableCell >
+                                        <Button color="primary" startIcon={<EditIcon/>} onClick={()=>{
+                                            setModal(true);
+                                            setContent(row.body)
+                                        }}></Button>
+                                        {/*<Input*/}
+                                        {/*    defaultValue={row.body}*/}
+                                        {/*    onChange={(e) => row.body = e.target.value}/>*/}
                                     </TableCell>
                                     <TableCell>
                                         <Input
@@ -285,7 +313,6 @@ export default function LandingPage(prop) {
                                     </TableCell>
                                     <TableCell width="90px">
                                         <FormControl fullWidth>
-
                                             <NativeSelect
                                                 defaultValue={row.typeId}
                                                 onChange={(e) => row.typeId = e.target.value}
@@ -295,11 +322,6 @@ export default function LandingPage(prop) {
                                                 <option value="{30}">Thirty</option>
                                             </NativeSelect>
                                         </FormControl>
-
-
-                                        {/*<Input*/}
-                                        {/*    defaultValue={row.typeId}*/}
-                                        {/*    onChange={(e) => row.typeId = e.target.value}/>*/}
                                     </TableCell>
                                     <TableCell align="center">
                                         <div>
@@ -312,15 +334,22 @@ export default function LandingPage(prop) {
                                             </Button>
                                         </div>
                                     </TableCell>
-
-
                                 </TableRow>)
                             )}
                         </TableBody>
                     </Table>
                 </TableContainer>
-
-
+                <Modal
+                    open={modal}
+                    onClose={handleClose}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                >
+                    <Box sx={style}>
+                                <Tiptap content = {content} setContent={setContent()} />
+                    </Box>
+                </Modal>
+                <Footer/>
             </Box>
         </Box>
     );

@@ -37,8 +37,8 @@ export default function Footer(props) {
             <ListItem className={classes.inlineBlock}>
 
             </ListItem>
-            <ListItem className={classes.inlineBlock}>
-           <p>goods</p>
+            <ListItem  className={classes.inlineBlock}>
+           <p >goods</p>
             </ListItem>
           </List>
         </div>
