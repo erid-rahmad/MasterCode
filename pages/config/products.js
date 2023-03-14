@@ -135,6 +135,10 @@ const Drawer = styled(MuiDrawer, {shouldForwardProp: (prop) => prop !== 'open'})
 
 export default function LandingPage(prop) {
     const theme = useTheme();
+    const [Products, setProduct] = useState(prop.data);
+    const [open, setOpen] = useState(false);
+    const [content, setContent] = useState(false);
+    const [modal, setModal] = React.useState(false);
 
     const style = {
         position: 'absolute',
@@ -150,23 +154,37 @@ export default function LandingPage(prop) {
         px: 4,
         pb: 3,
     };
-    const [open, setOpen] = useState(false);
-    const [content, setContent] = useState(false);
+
+
 
     const handleDrawerOpen = () => {
         console.log("this open drawer", open)
         open == true ? setOpen(false) : setOpen(true);
     };
 
-    const [Products, setProduct] = useState(prop.data);
+    function saveBody(data){
+        console.log(data)
+        console.log("1",content)
 
-    const [modal, setModal] = React.useState(false);
+
+        setContent( // Replace the state
+                { body: data,...content }
+        );
+        console.log("2",content)
+        updateProduct(content)
+    }
+
+
+
+
     const handleOpen = () => {
         setModal(true);
     };
     const handleClose = () => {
         setModal(false);
     };
+
+
 
 
     async function addProduct() {
@@ -295,7 +313,7 @@ export default function LandingPage(prop) {
                                     <TableCell >
                                         <Button color="primary" startIcon={<EditIcon/>} onClick={()=>{
                                             setModal(true);
-                                            setContent(row.body)
+                                            setContent(row)
                                         }}></Button>
                                         {/*<Input*/}
                                         {/*    defaultValue={row.body}*/}
@@ -346,7 +364,7 @@ export default function LandingPage(prop) {
                     aria-describedby="modal-modal-description"
                 >
                     <Box sx={style}>
-                                <Tiptap content = {content}  />
+                                <Tiptap content = {content.body} saveBody={(data)=>saveBody(data)}   />
                     </Box>
                 </Modal>
                 <Footer/>

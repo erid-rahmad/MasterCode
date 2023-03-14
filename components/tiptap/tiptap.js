@@ -7,6 +7,8 @@ import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import React, {useEffect} from 'react'
 import Button from '@mui/material/Button';
+import DeleteIcon from "@material-ui/icons/Delete";
+import EditIcon from "@material-ui/icons/Edit";
 
 
 
@@ -206,13 +208,25 @@ export default (prop) => {
     ,
     })
 
+    function save(){
+        prop.saveBody(editor.getHTML())
+
+
+        console.log("thiw editor",editor.getHTML())
+    }
+
+
+
 
 
     return (
         <div>
             <MenuBar editor={editor} />
-            <EditorContent style={{
+            <EditorContent onChange={(e) => console.log("change ",e)} style={{
                 overflowX: 'scroll',height:'300px'}}  editor={editor} />
+            <Button color="warning" startIcon={<EditIcon/>}
+                    onClick={() => save()}>
+            </Button>
         </div>
     )
 }
